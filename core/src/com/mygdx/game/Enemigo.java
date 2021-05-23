@@ -3,7 +3,7 @@ package com.mygdx.game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class Enemigo {
-    Animacion animacion = new Animacion(6, true, "nimbus_0.png", "nimbus_1.png");
+    Animacion animacion = new Animacion(6, true, "meteorito_0.png", "meteorito_1.png", "meteorito_2.png");
     float x, y, w, h, vx, vy;
     Temporizador cambioVelocidad = new Temporizador(60);
 
