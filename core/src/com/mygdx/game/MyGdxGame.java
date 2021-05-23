@@ -44,7 +44,7 @@ public class MyGdxGame extends ApplicationAdapter {
 
         for (Enemigo enemigo : enemigos) {
             for (Disparo disparo : jugador.disparos) {
-                if (Utils.solapan(disparo.x, disparo.y, disparo.w, disparo.h, enemigo.x, enemigo.y, enemigo.w, enemigo.h)) {
+                if (Temporizador.Utils.solapan(disparo.x, disparo.y, disparo.w, disparo.h, enemigo.x, enemigo.y, enemigo.w, enemigo.h)) {
                     disparosAEliminar.add(disparo);
                     enemigosAEliminar.add(enemigo);
                     jugador.puntos++;
@@ -52,7 +52,7 @@ public class MyGdxGame extends ApplicationAdapter {
                 }
             }
 
-            if (!jugador.muerto && Utils.solapan(enemigo.x, enemigo.y, enemigo.w, enemigo.h, jugador.x, jugador.y, jugador.w, jugador.h)) {
+            if (!jugador.muerto && Temporizador.Utils.solapan(enemigo.x, enemigo.y, enemigo.w, enemigo.h, jugador.x, jugador.y, jugador.w, jugador.h)) {
                 jugador.morir();
             }
 

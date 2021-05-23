@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Jugador {
-    Animacion animacion = new Animacion(6f, true, "express_0.png", "express_1.png");
+    Animacion animacion = new Animacion(6f, true, "nave_0.png", "nave_1.png", "nave_2.png");
     float x, y, w, h, v;
     List<Disparo> disparos = new ArrayList<>();
     int vidas = 3;
