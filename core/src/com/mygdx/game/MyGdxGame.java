@@ -2,6 +2,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,38 +14,54 @@ import java.util.List;
 
 public class MyGdxGame extends ApplicationAdapter {
     SpriteBatch batch;
-    BitmapFont bitmapFont;
+    BitmapFont font;
     Fondo fondo;
     Jugador jugador;
-    List<Enemigo> enemigos = new ArrayList<>();
-    List<Disparo> disparosAEliminar = new ArrayList<>();
-    List<Enemigo> enemigosAEliminar = new ArrayList<>();
-    Temporizador temporizadorNuevoAlien = new Temporizador(120);
+    List<Enemigo> enemigos;
+    List<Disparo> disparosAEliminar;
+    List<Enemigo> enemigosAEliminar;
+    Temporizador temporizadorNuevoEnemigo;
+    ScoreBoard scoreboard;
+    boolean gameover;
+
 
     @Override
     public void create() {
         batch = new SpriteBatch();
-        bitmapFont = new BitmapFont();
-        bitmapFont.setColor(Color.WHITE);
-        bitmapFont.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        bitmapFont.getData().setScale(2f);
+        font = new BitmapFont();
+        font.setColor(Color.WHITE);
+        font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        font.getData().setScale(2f);
 
+        iniciarJuego();
+        Sound sound = Gdx.audio.newSound(Gdx.files.internal("spacesound.mp3"));
+        sound.setLooping(sound.play(1.0f), true);
+    }
+
+    void iniciarJuego(){
         fondo = new Fondo();
         jugador = new Jugador();
+        enemigos = new ArrayList<>();
+        temporizadorNuevoEnemigo = new Temporizador(120);
+        disparosAEliminar = new ArrayList<>();
+        enemigosAEliminar = new ArrayList<>();
+        scoreboard = new ScoreBoard();
+
+        gameover = false;
     }
 
     void update() {
         Temporizador.tiempoJuego += 1;
 
-        if (temporizadorNuevoAlien.suena()) enemigos.add(new Enemigo());
+        if (temporizadorNuevoEnemigo.suena()) enemigos.add(new Enemigo());
 
-        jugador.update();
+        if(!gameover) jugador.update();
 
         for (Enemigo enemigo : enemigos) enemigo.update();              // enemigos.forEach(Enemigo::update);
 
         for (Enemigo enemigo : enemigos) {
             for (Disparo disparo : jugador.disparos) {
-                if (Temporizador.Utils.solapan(disparo.x, disparo.y, disparo.w, disparo.h, enemigo.x, enemigo.y, enemigo.w, enemigo.h)) {
+                if (Utils.solapan(disparo.x, disparo.y, disparo.w, disparo.h, enemigo.x, enemigo.y, enemigo.w, enemigo.h)) {
                     disparosAEliminar.add(disparo);
                     enemigosAEliminar.add(enemigo);
                     jugador.puntos++;
@@ -52,8 +69,11 @@ public class MyGdxGame extends ApplicationAdapter {
                 }
             }
 
-            if (!jugador.muerto && Temporizador.Utils.solapan(enemigo.x, enemigo.y, enemigo.w, enemigo.h, jugador.x, jugador.y, jugador.w, jugador.h)) {
+            if (!gameover && !jugador.muerto && Utils.solapan(enemigo.x, enemigo.y, enemigo.w, enemigo.h, jugador.x, jugador.y, jugador.w, jugador.h)) {
                 jugador.morir();
+                if (jugador.vidas == 0){
+                    gameover = true;
+                }
             }
 
             if (enemigo.x < -enemigo.w) enemigosAEliminar.add(enemigo);
@@ -67,6 +87,15 @@ public class MyGdxGame extends ApplicationAdapter {
         for (Enemigo enemigo : enemigosAEliminar) enemigos.remove(enemigo);               // enemigosAEliminar.forEach(enemigo -> enemigos.remove(enemigo));
         disparosAEliminar.clear();
         enemigosAEliminar.clear();
+
+        if(gameover) {
+            int result = scoreboard.update(jugador.puntos);
+            if(result == 1) {
+                iniciarJuego();
+            } else if (result == 2) {
+                Gdx.app.exit();
+            }
+        }
     }
 
     @Override
@@ -80,14 +109,12 @@ public class MyGdxGame extends ApplicationAdapter {
         fondo.render(batch);
         jugador.render(batch);
         for (Enemigo enemigo : enemigos) enemigo.render(batch);  // enemigos.forEach(e -> e.render(batch));
-        bitmapFont.draw(batch, "" + jugador.vidas, 590, 440);
-        bitmapFont.draw(batch, "" + jugador.puntos, 30, 440);
+        font.draw(batch, "" + jugador.vidas, 590, 440);
+        font.draw(batch, "" + jugador.puntos, 30, 440);
+
+        if (gameover){
+            scoreboard.render(batch, font);
+        }
         batch.end();
     }
 }
-
-/*
-init();
-create();
-while(true) render();
- */

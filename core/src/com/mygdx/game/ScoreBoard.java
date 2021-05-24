@@ -27,20 +27,13 @@ public class ScoreBoard {
         }
     }
 
-    Texture background = new Texture("back.png");
+    Texture background = new Texture("space.png");
     char[] nombre = {'A', 'A','A'};  // 65:A -> 90:Z
     int index = 0;  // 0=1a letra; 1=2a letra; 2=3a letra; 3=replay; 4=exit
     private boolean saved;
 
     List<Score> scoreList = new ArrayList<>();
 
-    /**
-     * @param puntos
-     * @return
-     *         0 = seguir mostrando el scoreboard
-     *         1 = replay
-     *         2 = exit
-     */
     int update(int puntos){
         if(index < 3 && Gdx.input.isKeyJustPressed(Input.Keys.D)) {
             nombre[index]++;

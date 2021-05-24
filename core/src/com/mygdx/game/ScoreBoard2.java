@@ -72,7 +72,7 @@ public class ScoreBoard2 {
         stage.clear();
         Table table = new Table(skin);
         table.setFillParent(true);
-        table.setBackground(new TextureRegionDrawable(new Texture("back.png")));
+        table.setBackground(new TextureRegionDrawable(new Texture("space.png")));
 //        table.setDebug(true);
         stage.addActor(table);
 
